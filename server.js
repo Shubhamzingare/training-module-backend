@@ -1,42 +1,22 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
+const app = require('./src/app');
+const env = require('./src/config/env');
+const logger = require('./src/utils/logger');
 
-const app = express();
+const startServer = async () => {
+  try {
+    // TODO: Connect to MongoDB
+    // await connectDB();
+    // logger.success('Database connected');
 
-app.use(cors());
-app.use(express.json());
+    const PORT = env.PORT;
+    app.listen(PORT, () => {
+      logger.success(`Training Module API running on port ${PORT}`);
+      logger.info(`Environment: ${env.NODE_ENV}`);
+    });
+  } catch (error) {
+    logger.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
 
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Training Module API is running' });
-});
-
-// Sample API endpoint
-app.get('/api/modules', (req, res) => {
-  res.json({
-    modules: [
-      { id: 1, title: 'Module 1', description: 'Introduction' },
-      { id: 2, title: 'Module 2', description: 'Advanced Topics' }
-    ]
-  });
-});
-
-// Get single module
-app.get('/api/modules/:id', (req, res) => {
-  res.json({
-    id: req.params.id,
-    title: `Module ${req.params.id}`,
-    content: 'Module content goes here'
-  });
-});
-
-// Test POST endpoint
-app.post('/api/test', (req, res) => {
-  res.json({ message: 'Test successful', data: req.body });
-});
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Training Module API running on port ${PORT}`);
-});
+startServer();
