@@ -18,6 +18,10 @@ async function ensureDB() {
 const app = require('../src/app');
 
 module.exports = async (req, res) => {
-  await ensureDB();
+  try {
+    await ensureDB();
+  } catch (err) {
+    return res.status(500).json({ success: false, error: 'DB connection failed: ' + err.message });
+  }
   return app(req, res);
 };
