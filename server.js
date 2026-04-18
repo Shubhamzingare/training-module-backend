@@ -1,12 +1,13 @@
 const app = require('./src/app');
 const env = require('./src/config/env');
 const logger = require('./src/utils/logger');
+const { connectDB } = require('./src/config/database');
 
 const startServer = async () => {
   try {
-    // TODO: Connect to MongoDB
-    // await connectDB();
-    // logger.success('Database connected');
+    // Connect to MongoDB
+    await connectDB();
+    logger.success('Database connected');
 
     const PORT = env.PORT;
     app.listen(PORT, () => {

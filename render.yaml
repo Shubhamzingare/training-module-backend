@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: habuild-training-backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DB_URI
+        fromDatabase:
+          name: training-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRY
+        value: 7d
+      - key: CORS_ORIGIN
+        value: https://habuild-training.vercel.app

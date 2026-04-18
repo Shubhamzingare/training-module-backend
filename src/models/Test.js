@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { TEST_STATUS } = require('../config/constants');
 
 const testSchema = new mongoose.Schema(
   {
@@ -11,7 +10,17 @@ const testSchema = new mongoose.Schema(
     moduleId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Module',
-      required: true,
+      required: false,
+    },
+    categoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
+      required: false,
+    },
+    moduleType: {
+      type: String,
+      enum: ['wati_training', 'new_deployment', ''],
+      default: '',
     },
     description: {
       type: String,
@@ -19,33 +28,85 @@ const testSchema = new mongoose.Schema(
     },
     totalMarks: {
       type: Number,
-      required: [true, 'Total marks is required'],
+      required: true,
       default: 100,
+    },
+    passingMarks: {
+      type: Number,
+      default: 50,
     },
     status: {
       type: String,
-      enum: [TEST_STATUS.DRAFT, TEST_STATUS.PUBLISHED, TEST_STATUS.ARCHIVED],
-      default: TEST_STATUS.DRAFT,
+      enum: ['draft', 'active', 'locked'],
+      default: 'draft',
+    },
+    timeLimit: {
+      type: Number,
+      default: 60, // in minutes
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'Admin',
       required: true,
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
+    // Google Forms Features - Question & Option Shuffling
+    shuffleQuestions: {
+      type: Boolean,
+      default: false,
     },
-    updatedAt: {
+    shuffleOptions: {
+      type: Boolean,
+      default: false,
+    },
+    // Google Forms Features - Response Handling
+    allowMultipleAttempts: {
+      type: Boolean,
+      default: false,
+    },
+    maxAttempts: {
+      type: Number,
+      default: null, // null means unlimited
+    },
+    // Google Forms Features - Response Visibility
+    responseVisibility: {
+      type: String,
+      enum: ['score_only', 'score_and_answers', 'full_feedback'],
+      default: 'score_only',
+    },
+    // Google Forms Features - Auto Submit
+    autoSubmitOnTimeEnd: {
+      type: Boolean,
+      default: false,
+    },
+    // Google Forms Features - Feedback
+    feedbackText: {
+      type: String,
+      default: '',
+    },
+    // Google Forms Features - User Info Collection
+    requireEmail: {
+      type: Boolean,
+      default: false,
+    },
+    // Google Forms Features - UI Options
+    showProgressBar: {
+      type: Boolean,
+      default: true,
+    },
+    randomizeQuestionOrder: {
+      type: Boolean,
+      default: false,
+    },
+    // Tracking settings changes
+    settingsUpdatedAt: {
       type: Date,
-      default: Date.now,
+      default: null,
     },
   },
   { timestamps: true }
 );
 
-// Index for faster queries
-testSchema.index({ moduleId: 1 });
-testSchema.index({ status: 1 });
+testSchema.index({ moduleId: 1, status: 1 });
+testSchema.index({ createdBy: 1, createdAt: -1 });
 
 module.exports = mongoose.model('Test', testSchema);

@@ -8,6 +8,10 @@ const moduleContentSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    rawContent: {
+      type: String,
+      required: true,
+    },
     keyPoints: [
       {
         type: String,
@@ -19,24 +23,15 @@ const moduleContentSchema = new mongoose.Schema(
         answer: String,
       },
     ],
-    rawContent: {
-      type: String,
-    },
     generatedBy: {
       type: String,
-      enum: ['claude', 'manual'],
-      default: 'manual',
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
+      enum: ['claude', 'manual', 'uploaded'],
+      default: 'claude',
     },
   },
   { timestamps: true }
 );
+
+moduleContentSchema.index({ moduleId: 1 });
 
 module.exports = mongoose.model('ModuleContent', moduleContentSchema);

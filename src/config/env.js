@@ -16,8 +16,10 @@ const env = {
   CLAUDE_MODEL: process.env.CLAUDE_MODEL || 'claude-3-5-sonnet-20241022',
 
   // File Upload
-  MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
-  ALLOWED_FILE_TYPES: ['pdf', 'ppt', 'pptx', 'doc', 'docx'],
+  MAX_FILE_SIZE: process.env.MAX_FILE_SIZE || 100 * 1024 * 1024, // 100MB
+  UPLOAD_DIR: process.env.UPLOAD_DIR || './uploads',
+  ALLOWED_FILE_TYPES: (process.env.ALLOWED_FILE_TYPES || 'pdf,ppt,pptx,doc,docx,mp4,mov,avi,mkv,webm').split(','),
+  MAX_VIDEO_DURATION: process.env.MAX_VIDEO_DURATION || 60 * 60, // 60 minutes in seconds
 
   // CORS
   CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:3000',
