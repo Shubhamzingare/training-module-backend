@@ -42,10 +42,13 @@ class AdminAuthService {
         token,
       };
     } catch (error) {
-      if (error instanceof (UnauthorizedError || ValidationError)) {
+      // Re-throw known errors
+      if (error instanceof UnauthorizedError || error instanceof ValidationError) {
         throw error;
       }
-      throw new ValidationError('Login failed');
+      // Log and throw the real error for debugging
+      logger.error('Login error:', error.message);
+      throw new ValidationError('Login failed: ' + error.message);
     }
   }
 
