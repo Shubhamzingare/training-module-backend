@@ -94,16 +94,12 @@ class AdminAuthService {
   }
 
   generateToken(adminId, email, role) {
+    const secret = env.JWT_SECRET || 'habuild-training-secret-2024';
+    const expiry = env.JWT_EXPIRY || '7d';
     return jwt.sign(
-      {
-        id: adminId,
-        email,
-        role,
-      },
-      env.JWT_SECRET,
-      {
-        expiresIn: env.JWT_EXPIRY,
-      }
+      { id: adminId, email, role },
+      secret,
+      { expiresIn: expiry.trim() }
     );
   }
 }
