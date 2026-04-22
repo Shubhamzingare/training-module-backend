@@ -10,7 +10,8 @@ const testSessionSchema = new mongoose.Schema(
     moduleId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Module',
-      required: true,
+      required: false,
+      default: null,
     },
     employeeId: {
       type: String,
@@ -30,7 +31,8 @@ const testSessionSchema = new mongoose.Schema(
     },
     designation: {
       type: String,
-      required: true,
+      required: false,
+      default: '',
     },
     shiftId: {
       type: mongoose.Schema.Types.ObjectId,
