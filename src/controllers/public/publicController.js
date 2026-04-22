@@ -93,25 +93,23 @@ class PublicController {
   async startTest(req, res, next) {
     try {
       const { id } = req.params;
-      const { employeeId, name, email, departmentId, designation, shiftId, phone, totalQuestions } = req.body;
+      const { name, departmentId, designation, shiftId, phone } = req.body;
 
       // Validate required fields
-      if (!employeeId || !name || !departmentId || !shiftId || !phone) {
+      if (!name || !departmentId || !shiftId || !phone) {
         return res.status(400).json({
           success: false,
-          message: 'Missing required fields: employeeId, name, departmentId, shiftId, phone',
+          message: 'Missing required fields: name, departmentId, shiftId, phone',
         });
       }
 
       const session = await publicService.startTestSession(id, {
-        employeeId,
+        employeeId: phone, // use phone as identifier
         name,
-        email,
         departmentId,
         designation,
         shiftId,
         phone,
-        totalQuestions,
       });
 
       res.json({
@@ -149,19 +147,35 @@ class PublicController {
 
       // Calculate score
       let score = 0;
-      let totalMarks = 0;
+      let correctCount = 0;
+      const totalMarks = questions.reduce((sum, q) => sum + (q.marks || 0), 0);
 
       for (const question of questions) {
-        totalMarks += question.marks || 0;
         const userAnswer = answers[question._id];
+        const qMarks = question.marks || 0;
 
-        // For MCQ, check if answer is correct
-        if (question.type === 'mcq' && userAnswer === question.correctAnswer) {
-          score += question.marks || 0;
-        }
-        // For descriptive, we'd need manual grading - for now give full marks if answered
-        else if (question.type === 'descriptive' && userAnswer) {
-          score += question.marks || 0; // Manual grading needed
+        if (question.type === 'mcq') {
+          // userAnswer is option index; find which option is correct
+          const correctIdx = (question.options || []).findIndex(o => o.isCorrect);
+          if (userAnswer !== null && userAnswer !== undefined && Number(userAnswer) === correctIdx) {
+            score += qMarks;
+            correctCount++;
+          }
+        } else if (question.type === 'checkbox') {
+          // userAnswer is array of indices; find all correct indices
+          const correctIdxs = (question.options || []).reduce((arr, o, i) => o.isCorrect ? [...arr, i] : arr, []);
+          const ua = Array.isArray(userAnswer) ? userAnswer.map(Number) : [];
+          const isCorrect = correctIdxs.length === ua.length && correctIdxs.every(i => ua.includes(i));
+          if (isCorrect) { score += qMarks; correctCount++; }
+        } else if (question.type === 'shortAnswer' || question.type === 'short_answer') {
+          // Case-insensitive match
+          if (userAnswer && question.correctAnswer &&
+              String(userAnswer).trim().toLowerCase() === String(question.correctAnswer).trim().toLowerCase()) {
+            score += qMarks;
+            correctCount++;
+          }
+        } else if (userAnswer && userAnswer !== '') {
+          // For descriptive/paragraph — manual grading needed, skip auto-score
         }
       }
 
@@ -188,6 +202,7 @@ class PublicController {
           totalMarks: session.totalMarks,
           isPassed,
           passingMarks: test?.passingMarks || 50,
+          correctCount,
           percentage: Math.round((score / session.totalMarks) * 100),
         },
       });
