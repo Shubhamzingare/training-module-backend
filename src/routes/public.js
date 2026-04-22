@@ -30,6 +30,18 @@ router.get('/shifts', async (req, res, next) => {
   }
 });
 
+// Modules by category (public)
+router.get('/categories/:categoryId/modules', async (req, res, next) => {
+  try {
+    const Module = require('../models/Module');
+    const modules = await Module.find({
+      categoryId: req.params.categoryId,
+      status: 'active',
+    }).select('title description fileType fileUrl keyPoints faqs').sort({ createdAt: -1 });
+    res.json({ success: true, data: modules });
+  } catch (error) { next(error); }
+});
+
 // Modules
 router.get('/modules/:id', (req, res, next) => publicController.getModuleContent(req, res, next));
 
