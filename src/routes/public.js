@@ -33,7 +33,16 @@ router.get('/shifts', async (req, res, next) => {
 // Modules
 router.get('/modules/:id', (req, res, next) => publicController.getModuleContent(req, res, next));
 
-// Tests
+// List all active tests (public)
+router.get('/tests', async (req, res, next) => {
+  try {
+    const Test = require('../models/Test');
+    const tests = await Test.find({ status: 'active' }).sort({ createdAt: -1 });
+    res.json({ success: true, data: tests });
+  } catch (error) { next(error); }
+});
+
+// Get single test
 router.get('/tests/:id', (req, res, next) => publicController.getTestById(req, res, next));
 
 router.get('/tests/:id/questions', async (req, res, next) => {
