@@ -72,6 +72,7 @@ class PublicService {
 
       return {
         id: test._id,
+        _id: test._id,
         title: test.title,
         description: test.description,
         status: test.status,
@@ -79,6 +80,9 @@ class PublicService {
         passingMarks: test.passingMarks,
         timeLimit: test.timeLimit,
         moduleId: test.moduleId,
+        googleFormUrl: test.googleFormUrl || null,
+        shuffleQuestions: test.shuffleQuestions,
+        autoSubmitOnTimeEnd: test.autoSubmitOnTimeEnd,
       };
     } catch (error) {
       throw new Error(`Error fetching test: ${error.message}`);

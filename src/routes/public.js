@@ -49,7 +49,9 @@ router.get('/modules/:id', (req, res, next) => publicController.getModuleContent
 router.get('/tests', async (req, res, next) => {
   try {
     const Test = require('../models/Test');
-    const tests = await Test.find({ status: 'active' }).sort({ createdAt: -1 });
+    const tests = await Test.find({ status: 'active' })
+      .select('title description totalMarks passingMarks timeLimit status googleFormUrl moduleType categoryId createdAt')
+      .sort({ createdAt: -1 });
     res.json({ success: true, data: tests });
   } catch (error) { next(error); }
 });
