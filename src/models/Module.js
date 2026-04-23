@@ -28,7 +28,17 @@ const moduleSchema = new mongoose.Schema(
     fileType: {
       type: String,
       enum: ['pdf', 'ppt', 'pptx', 'doc', 'docx', 'video'],
-      required: true,
+      required: false,
+      default: null,
+    },
+    contentUrl: {
+      type: String,
+      default: null,   // external URL (Canva, Google Drive, etc.)
+    },
+    contentType: {
+      type: String,
+      enum: ['upload', 'canva', 'drive', 'youtube', 'link', null],
+      default: null,
     },
     sprintPlanId: {
       type: mongoose.Schema.Types.ObjectId,

@@ -44,6 +44,10 @@ const testSchema = new mongoose.Schema(
       type: Number,
       default: 60, // in minutes
     },
+    googleFormUrl: {
+      type: String,
+      default: null,
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Admin',

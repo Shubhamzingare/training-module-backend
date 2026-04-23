@@ -37,7 +37,7 @@ router.get('/categories/:categoryId/modules', async (req, res, next) => {
     const modules = await Module.find({
       categoryId: req.params.categoryId,
       status: 'active',
-    }).select('title description fileType fileUrl keyPoints faqs demoDate createdAt').sort({ demoDate: -1, createdAt: -1 });
+    }).select('title description fileType fileUrl contentUrl contentType keyPoints faqs demoDate createdAt').sort({ demoDate: -1, createdAt: -1 });
     res.json({ success: true, data: modules });
   } catch (error) { next(error); }
 });
