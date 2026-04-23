@@ -52,7 +52,7 @@ router.delete('/topics/:id', topicController.deleteTopic);
 // Modules
 router.post('/modules', uploadSingleFile, async (req, res, next) => {
   try {
-    const { title, description, categoryId, topicId, fileType } = req.body;
+    const { title, description, categoryId, topicId, fileType, demoDate } = req.body;
     const VideoValidationService = require('../../services/file/videoValidationService');
 
     if (!title || !categoryId) {
@@ -98,6 +98,7 @@ router.post('/modules', uploadSingleFile, async (req, res, next) => {
       topicId: topicId || null,
       fileUrl,
       fileType: fileType || 'pdf',
+      demoDate: demoDate || null,
       status: 'draft',
       keyPoints: [],
       faqs: [],

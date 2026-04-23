@@ -34,6 +34,11 @@ const moduleSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'SprintPlan',
     },
+    demoDate: {
+      type: Date,
+      required: false,
+      default: null,
+    },
     status: {
       type: String,
       enum: ['active', 'locked', 'draft'],
